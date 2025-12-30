@@ -2,6 +2,6 @@
   "name": "weeklyreport",
   "version": "1.0.0",
   "scripts": {
-    "build": "echo 'No build step required for serverless function.'"
+    "build": "echo 'Creating dummy static directory for Vercel...' && mkdir -p .vercel/output/static && cp index.html .vercel/output/static/ 2>/dev/null || true"
   }
 }
