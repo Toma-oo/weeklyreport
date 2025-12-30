@@ -1,7 +1,0 @@
-{
-  "name": "weeklyreport",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "echo 'Build step complete' && cp index.html vercel/output/static/ 2>/dev/null || echo 'Static file ready'"
-  }
-}
