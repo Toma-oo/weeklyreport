@@ -1,0 +1,2267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周报内容填充器 - 完整版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: #1a1a1a;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            border: 1px solid #333;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #58a6ff, #1f6feb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .auth-btn {
+            padding: 8px 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #21262d;
+            color: #c9d1d9;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .auth-btn:hover {
+            border-color: #58a6ff;
+            background: #30363d;
+        }
+        
+        .auth-btn.primary {
+            background: linear-gradient(135deg, #1f6feb, #58a6ff);
+            color: white;
+            border: none;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 1100px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #333;
+            height: fit-content;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .panel h2 {
+            color: #f0f6fc;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+        
+        .career-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .career-btn {
+            flex: 1;
+            padding: 12px 6px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background: #21262d;
+            color: #c9d1d9;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        
+        .career-btn:hover {
+            border-color: #58a6ff;
+            background: #30363d;
+        }
+        
+        .career-btn.active {
+            background: linear-gradient(135deg, #1f6feb, #58a6ff);
+            color: white;
+            border-color: #1f6feb;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background: #21262d;
+            color: #c9d1d9;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.1s;
+            font-size: 0.9rem;
+        }
+        
+        .mode-btn:hover {
+            border-color: #58a6ff;
+            background: #30363d;
+        }
+        
+        .mode-btn.active {
+            background: linear-gradient(135deg, #1f6feb, #58a6ff);
+            color: white;
+            border-color: #1f6feb;
+        }
+        
+        .mode-desc {
+            background: #161b22;
+            border-left: 3px solid #1f6feb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 0.9rem;
+            color: #8b949e;
+            display: block;
+        }
+        
+        .input-box {
+            width: 100%;
+            height: 320px;
+            padding: 18px;
+            border: 1px solid #333;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            margin-bottom: 15px;
+        }
+        
+        .input-box:focus {
+            outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+        }
+        
+        .generate-btn {
+            background: linear-gradient(135deg, #1f6feb, #58a6ff);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-top: 5px;
+        }
+        
+        .generate-btn:hover {
+            background: linear-gradient(135deg, #58a6ff, #1f6feb);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(88, 166, 255, 0.2);
+        }
+        
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .copy-btn {
+            padding: 10px 24px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #21262d;
+            color: #c9d1d9;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .copy-btn:hover {
+            border-color: #58a6ff;
+            background: #30363d;
+        }
+        
+        .output-content {
+            background: #0d1117;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            min-height: 600px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            line-height: 1.7;
+            font-family: 'JetBrains Mono', 'Consolas', monospace;
+            font-size: 14px;
+            color: #c9d1d9;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: #8b949e;
+            font-size: 0.9rem;
+            border-top: 1px solid #333;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 10px;
+        }
+        
+        .footer-links a {
+            color: #58a6ff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background: #1a1a1a;
+            width: 90%;
+            max-width: 600px;
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #333;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .modal-header h3 {
+            color: #f0f6fc;
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #8b949e;
+            line-height: 1;
+            position: absolute;
+            right: 0;
+            top: -10px;
+            z-index: 1001;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #0d1117;
+            color: #c9d1d9;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+        
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #1f6feb, #58a6ff);
+            color: white;
+        }
+        
+        .modal-btn.secondary {
+            background: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #333;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: #0d1117;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #58a6ff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #8b949e;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #f0f6fc;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left: 4px solid #2ea043;
+        }
+        
+        .notification.error {
+            border-left: 4px solid #f85149;
+        }
+        
+        /* 后台管理标签页样式 */
+        .admin-tabs {
+            display: flex;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        
+        .admin-tab {
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            color: #8b949e;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .admin-tab:hover {
+            color: #c9d1d9;
+        }
+        
+        .admin-tab.active {
+            color: #58a6ff;
+            border-bottom-color: #58a6ff;
+        }
+        
+        .admin-tab-content {
+            display: none;
+        }
+        
+        .admin-tab-content.active {
+            display: block;
+        }
+        
+        .admin-log-container {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #0d1117;
+            border-radius: 8px;
+            border: 1px solid #333;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        .log-entry {
+            padding: 8px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .log-timestamp {
+            color: #8b949e;
+            font-size: 11px;
+        }
+        
+        .log-action {
+            color: #58a6ff;
+            font-weight: bold;
+        }
+        
+        .log-details {
+            color: #c9d1d9;
+            font-size: 11px;
+        }
+        
+        .log-email {
+            color: #2ea043;
+            font-size: 11px;
+        }
+        
+        .log-userid {
+            color: #ff7b72;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div id="notification" class="notification"></div>
+    
+    <div class="top-nav">
+        <div class="logo">
+            <div style="font-size: 1.8rem;">📋</div>
+            <h1>周报内容填充器</h1>
+        </div>
+        
+        <div class="auth-buttons">
+            <button class="auth-btn" onclick="showLogin()">登录</button>
+            <button class="auth-btn primary" onclick="showRegister()">注册</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="main-content">
+            <div class="panel">
+                <h2>📝 工作内容输入</h2>
+                
+                <div class="career-buttons">
+                    <button class="career-btn active" onclick="selectCareer('it')">IT开发</button>
+                    <button class="career-btn" onclick="selectCareer('product')">产品经理</button>
+                    <button class="career-btn" onclick="selectCareer('market')">市场运营</button>
+                </div>
+                
+                <div class="mode-selector">
+                    <button class="mode-btn active" onclick="selectMode('standard')">标准版</button>
+                    <button class="mode-btn" onclick="selectMode('luxury')">豪华版</button>
+                </div>
+                
+                <div class="mode-desc" id="modeDesc">
+                    <strong>标准版：</strong>包含项目名称、进度、下周计划、上线时间、任务适当扩充
+                </div>
+                
+                <textarea class="input-box" id="inputText" placeholder="请在此输入工作内容（每行一项）：
+
+支持识别以下格式：
+项目名称：xxx项目
+工作任务：
+开发xx功能
+参加会议
+修复问题
+12.25上线
+产出物：xxx文档
+风险：xxx风险
+会议结论：1.xxx 2.xxx
+
+提示：支持多个项目，空行分隔"></textarea>
+                
+                <button class="generate-btn" onclick="generateReport()">
+                    🚀 生成周报
+                </button>
+            </div>
+            
+            <div class="panel">
+                <div class="output-header">
+                    <h2>📄 生成的周报</h2>
+                    <button class="copy-btn" onclick="copyReport()">
+                        📋 复制周报
+                    </button>
+                </div>
+                
+                <div class="output-content" id="outputContent">
+生成的周报将显示在这里...
+
+标准版：包含项目名称、进度、下周计划、上线时间、任务适当扩充
+豪华版：包含具体技术方案、量化指标、风险、产出物、会议结论等
+
+支持识别多个项目，智能扩充内容。
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-links">
+                <a onclick="showFeedback()">问题反馈</a>
+                <a onclick="showAdmin()">管理后台</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 登录模态框 -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔐 用户登录</h3>
+                <button class="close-btn" onclick="closeModal('loginModal')">×</button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <input type="email" id="loginEmail" placeholder="邮箱地址" style="width: 100%; padding: 12px; margin-bottom: 15px; background: #0d1117; color: #c9d1d9; border: 1px solid #333; border-radius: 8px;">
+                <input type="password" id="loginPassword" placeholder="密码" style="width: 100%; padding: 12px; margin-bottom: 15px; background: #0d1117; color: #c9d1d9; border: 1px solid #333; border-radius: 8px;">
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('loginModal')">取消</button>
+                <button class="modal-btn primary" onclick="login()">登录</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 注册模态框 -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📝 用户注册</h3>
+                <button class="close-btn" onclick="closeModal('registerModal')">×</button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <input type="email" id="registerEmail" placeholder="邮箱地址" style="width: 100%; padding: 12px; margin-bottom: 15px; background: #0d1117; color: #c9d1d9; border: 1px solid #333; border-radius: 8px;">
+                <input type="password" id="registerPassword" placeholder="密码（至少6位）" style="width: 100%; padding: 12px; margin-bottom: 15px; background: #0d1117; color: #c9d1d9; border: 1px solid #333; border-radius: 8px;">
+                <input type="password" id="registerConfirmPassword" placeholder="确认密码" style="width: 100%; padding: 12px; margin-bottom: 15px; background: #0d1117; color: #c9d1d9; border: 1px solid #333; border-radius: 8px;">
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('registerModal')">取消</button>
+                <button class="modal-btn primary" onclick="register()">注册</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 反馈模态框 -->
+    <div class="modal" id="feedbackModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📝 问题反馈</h3>
+                <button class="close-btn" onclick="closeModal('feedbackModal')">×</button>
+            </div>
+            <select id="feedbackType" style="width: 100%; padding: 10px; margin-bottom: 15px; background: #0d1117; color: #c9d1d9; border: 1px solid #333; border-radius: 8px;">
+                <option>BUG报告</option>
+                <option>功能建议</option>
+                <option>模板建议</option>
+                <option>其他</option>
+            </select>
+            <textarea id="feedbackText" placeholder="请描述你遇到的问题或建议..."></textarea>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('feedbackModal')">取消</button>
+                <button class="modal-btn primary" onclick="submitFeedback()">提交反馈</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 管理后台模态框 -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔧 管理后台</h3>
+                <button class="close-btn" onclick="closeModal('adminModal')">×</button>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab(0)">统计数据</button>
+                <button class="admin-tab" onclick="switchAdminTab(1)">用户反馈</button>
+                <button class="admin-tab" onclick="switchAdminTab(2)">行为日志</button>
+                <button class="admin-tab" onclick="switchAdminTab(3)">用户管理</button>
+            </div>
+            
+            <div class="admin-tab-content active" id="adminTab0">
+                <div style="margin-bottom: 25px;">
+                    <h4 style="margin-bottom: 15px; color: #f0f6fc;">今日数据</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="adminTodayUsers">0</div>
+                            <div class="stat-label">今日活跃用户</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="adminTodayReports">0</div>
+                            <div class="stat-label">今日生成数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="adminTodayIT">0</div>
+                            <div class="stat-label">IT开发</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="adminTodayProduct">0</div>
+                            <div class="stat-label">产品经理</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="adminTodayMarket">0</div>
+                            <div class="stat-label">市场运营</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 25px;">
+                    <h4 style="margin-bottom: 15px; color: #f0f6fc;">累计数据</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="adminTotalUsers">0</div>
+                            <div class="stat-label">总用户数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="adminTotalReports">0</div>
+                            <div class="stat-label">总生成数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="adminRegisteredUsers">0</div>
+                            <div class="stat-label">注册用户</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="adminAnonymousUsers">0</div>
+                            <div class="stat-label">匿名用户</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="adminRetentionRate">0%</div>
+                            <div class="stat-label">周留存率</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; padding: 20px; background: #0d1117; border-radius: 8px;">
+                    <button class="modal-btn secondary" onclick="resetAllStats()" style="width: 100%;">重置所有数据</button>
+                    <p style="margin-top: 10px; font-size: 12px; color: #8b949e;">重置将清空所有统计数据和日志</p>
+                </div>
+            </div>
+            
+            <div class="admin-tab-content" id="adminTab1">
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px; color: #f0f6fc;">用户反馈</h4>
+                    <textarea id="adminFeedback" style="width: 100%; height: 400px; font-size: 0.85rem;" readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn secondary" onclick="clearFeedback()">清空反馈</button>
+                    <button class="modal-btn secondary" onclick="exportFeedbackExcel()">导出Excel</button>
+                </div>
+            </div>
+            
+            <div class="admin-tab-content" id="adminTab2">
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px; color: #f0f6fc;">用户行为日志</h4>
+                    <div class="admin-log-container" id="adminLogs">
+                        <div class="log-entry">
+                            <div class="log-timestamp">系统初始化</div>
+                            <div class="log-action">页面访问</div>
+                            <div class="log-userid">用户ID：系统</div>
+                            <div class="log-details">用户访问了首页</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn secondary" onclick="clearLogs()">清空日志</button>
+                    <button class="modal-btn secondary" onclick="exportLogsExcel()">导出Excel</button>
+                </div>
+            </div>
+            
+            <div class="admin-tab-content" id="adminTab3">
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 10px; color: #f0f6fc;">用户管理</h4>
+                    <div style="background: #0d1117; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                        <h5 style="color: #58a6ff; margin-bottom: 10px;">用户统计</h5>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <strong style="color: #c9d1d9;">注册用户:</strong> 
+                                <span id="registeredCount" style="color: #2ea043;">0</span>
+                            </div>
+                            <div>
+                                <strong style="color: #c9d1d9;">匿名用户:</strong> 
+                                <span id="anonymousCount" style="color: #ff7b72;">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: #0d1117; border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                        <h5 style="color: #58a6ff; margin-bottom: 10px;">匿名用户ID映射</h5>
+                        <div id="anonymousUserList" style="max-height: 200px; overflow-y: auto; font-size: 12px;">
+                            <div style="color: #8b949e; padding: 5px;">暂无匿名用户数据</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="modal-btn secondary" onclick="clearAnonymousData()">清理匿名数据</button>
+                        <button class="modal-btn secondary" onclick="refreshUserData()">刷新数据</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="closeModal('adminModal')">关闭</button>
+                <button class="modal-btn secondary" onclick="exportAllData()">导出全部数据</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 核心配置 ====================
+        let currentCareer = 'it';
+        let currentMode = 'standard';
+        let generationCount = 0;
+        let currentUserEmail = null; // 记录当前登录用户的邮箱
+        let currentUserId = null; // 当前用户ID（可能是匿名ID或邮箱）
+        
+        // 用户数据统计 - 包含匿名用户
+        let userStats = {
+            totalUsers: 0,
+            registeredUsers: 0,
+            anonymousUsers: 0,
+            activeUsers: [],
+            totalReports: 0,
+            careerStats: { it: 0, product: 0, market: 0 },
+            userLogs: [],
+            anonymousUserMap: {}, // 匿名用户ID映射
+            todayStats: {
+                date: new Date().toDateString(),
+                users: new Set(),
+                reports: 0,
+                careers: { it: 0, product: 0, market: 0 }
+            }
+        };
+        
+        // 用户注册数据
+        let registeredUsers = [];
+        
+        // ==================== 修复：完整的示例模板 ====================
+        const careerExamples = {
+            it: `项目名称：用户中心v2.0
+工作任务：
+开发登录认证功能
+参加需求评审会议
+参加架构评审会议
+技术调研方案选型
+联调测试接口功能
+修复权限管理bug
+部署到测试环境
+写接口文档
+写测试用例并评审
+测试系统并反馈跟进问题
+性能压测
+数据库表结构设计
+12.28上线
+产出物：技术方案文档、API接口文档
+风险：第三方服务依赖风险
+会议结论：1.确定技术方案 2.明确接口规范 3.确认排期
+
+项目名称：订单系统优化
+工作任务：
+优化下单流程
+设计库存管理模块
+性能优化
+数据表结构调整
+接口性能测试
+监控系统集成
+1.15上线
+产出物：性能优化方案、监控告警规则
+风险：数据迁移风险
+会议结论：1.确定优化方案 2.明确监控指标 3.制定实施计划
+
+项目名称：支付网关升级
+工作任务：
+研究支付通道API
+设计支付路由策略
+开发对账功能
+安全合规审计
+压力测试
+灰度发布方案
+2.10上线
+产出物：支付路由方案、安全审计报告
+风险：支付失败风险
+会议结论：1.确认技术方案 2.制定测试计划 3.准备应急预案`,
+
+            product: `项目名称：电商产品优化v3.2
+工作任务：
+设计购物车优化原型
+撰写产品需求文档
+与需求方沟通确认需求
+需求评审会议
+跟进项目开发进度
+验收用户中心功能
+撰写用户手册
+跟进项目反馈问题
+绘制订单业务流程图
+参加UI评审会议
+数据分析报告撰写
+12.25上线
+产出物：PRD文档、原型设计稿
+风险：需求变更风险
+会议结论：1.确认功能范围 2.明确交互细节 3.确定开发排期
+
+项目名称：会员系统v1.0
+工作任务：
+设计会员等级体系
+策划积分商城方案
+用户权益设计
+会员数据分析
+营销活动策划
+1.30上线
+产出物：会员体系方案、营销活动策划
+风险：用户参与度风险
+会议结论：1.确定会员权益 2.明确积分规则 3.制定推广策略
+
+项目名称：数据质量系统
+工作任务：
+梳理产品架构
+研究竞品方案
+设计数据监控规则
+制定数据治理流程
+编写产品需求文档
+设计数据可视化看板
+2.20上线
+产出物：数据治理方案、监控规则文档
+风险：数据准确性风险
+会议结论：1.确认数据指标 2.明确监控规则 3.制定实施计划`,
+
+            market: `项目名称：双十一促销活动
+工作任务：
+策划活动整体方案
+制作宣传海报和文案
+分析往期活动数据
+执行社交媒体投放
+监控活动实时效果
+与KOL洽谈合作
+优化广告投放策略
+整理活动效果报告
+活动效果数据分析
+媒体关系维护
+12.10上线
+产出物：活动方案、数据分析报告
+风险：转化率不达预期
+会议结论：1.确定活动主题 2.确认预算分配 3.明确KPI指标
+
+项目名称：新品发布会
+工作任务：
+发布会流程策划
+媒体邀请函制作
+现场布置方案设计
+演讲嘉宾内容准备
+宣传物料制作
+媒体关系对接
+1.20上线
+产出物：发布会方案、宣传物料
+风险：现场效果风险
+会议结论：1.确认发布会流程 2.明确宣传策略 3.制定应急预案
+
+项目名称：品牌升级活动
+工作任务：
+研究市场趋势
+设计品牌视觉体系
+制定推广策略
+制作宣传视频
+策划线上线下活动
+媒体合作洽谈
+2.15上线
+产出物：品牌手册、推广方案
+风险：品牌认知风险
+会议结论：1.确认品牌定位 2.明确传播策略 3.制定执行计划`
+        };
+        
+        // ==================== 修复：增加话术模板库 ====================
+        const taskTemplates = {
+            // 通用模板 - 增加到5-6个
+            '梳理': [
+                (task) => `梳理${task}，整理功能模块关系，明确系统边界，输出产品架构图`,
+                (task) => `完成${task}工作，绘制系统组件图，定义接口规范，制定实施路线图`,
+                (task) => `规划${task}方案，明确技术选型，设计扩展方案，评估实施风险`,
+                (task) => `系统梳理${task}，整理业务逻辑，绘制流程图，明确交互规范`,
+                (task) => `全面梳理${task}，分析业务场景，整理需求文档，制定实施方案`,
+                (task) => `详细梳理${task}，整理核心流程，识别关键节点，制定执行计划`
+            ],
+            '研究': [
+                (task, career) => career === 'market' 
+                    ? `研究${task}，分析市场动态和竞品策略，挖掘用户需求，制定差异化推广方案`
+                    : career === 'product'
+                    ? `研究${task}，分析竞品功能和用户体验，识别产品机会点，制定产品策略`
+                    : `研究${task}，分析技术方案和架构设计，评估性能和扩展性`,
+                (task, career) => career === 'market'
+                    ? `进行${task}调研，收集用户反馈，分析行业最佳实践，制定市场策略`
+                    : `进行${task}调研，收集技术资料，分析实现方案，制定技术路线`,
+                (task, career) => career === 'market'
+                    ? `深入调研${task}，分析市场趋势，评估竞争态势，制定应对策略`
+                    : `深入研究${task}，分析技术可行性，评估实施方案，制定技术规划`,
+                (task, career) => career === 'market'
+                    ? `详细研究${task}，收集竞品资料，分析用户行为，制定优化策略`
+                    : `全面研究${task}，收集行业信息，分析技术趋势，制定发展路线`
+            ],
+            '设计': [
+                (task, career) => career === 'market'
+                    ? `设计${task}方案，制定详细执行计划，明确活动流程，输出策划文档`
+                    : career === 'product'
+                    ? `设计${task}原型，明确交互流程和视觉规范，输出设计文档`
+                    : `设计${task}架构，明确系统模块和接口定义，输出技术文档`,
+                (task, career) => career === 'market'
+                    ? `制定${task}设计，明确创意主题，规划执行细节，输出创意方案`
+                    : `完成${task}设计，明确功能规格，规划实施方案，输出详细设计`,
+                (task, career) => career === 'market'
+                    ? `规划${task}设计，确定视觉风格，制定传播策略，输出品牌方案`
+                    : `开发${task}设计，确定技术方案，规划开发流程，输出技术方案`
+            ],
+            
+            // IT开发专属 - 增加到5个
+            '开发': [
+                (task) => `开发${task}功能，采用微服务架构，实现RESTful API接口，通过单元测试验证`,
+                (task) => `实现${task}模块，设计高可用服务，完成集成测试和性能调优`,
+                (task) => `完成${task}组件，采用容器化部署，实现服务弹性伸缩，通过压力测试`,
+                (task) => `构建${task}功能，采用前后端分离架构，实现API接口，完成接口测试`,
+                (task) => `实现${task}服务，设计分布式架构，实现服务治理，完成性能优化`
+            ],
+            '修复': [
+                (task) => `修复${task}问题，分析问题根因，设计修复方案，编写修复代码，进行回归测试`,
+                (task) => `解决${task}缺陷，定位问题代码，重构相关模块，优化错误处理机制`,
+                (task) => `处理${task}故障，分析异常日志，优化代码逻辑，完善监控告警`,
+                (task) => `解决${task}漏洞，进行安全审计，优化代码实现，完善安全机制`,
+                (task) => `修复${task}bug，分析堆栈信息，优化算法逻辑，提升系统稳定性`
+            ],
+            '部署': [
+                (task) => `部署${task}环境，配置服务器参数，安装依赖组件，验证服务启动状态`,
+                (task) => `完成${task}发布，使用容器编排工具，配置网络策略，设置监控告警`,
+                (task) => `发布${task}版本，制定发布计划，执行灰度发布，监控发布效果`,
+                (task) => `上线${task}功能，进行生产部署，验证服务可用性，监控系统运行`,
+                (task) => `实施${task}部署，配置负载均衡，设置数据库集群，验证系统性能`
+            ],
+            '测试': [
+                (task) => `测试${task}功能，编写测试用例，执行功能测试，记录测试结果`,
+                (task) => `进行${task}测试，设计测试场景，执行压力测试，分析测试报告`,
+                (task) => `完成${task}验证，执行集成测试，验证系统功能，输出测试报告`,
+                (task) => `执行${task}测试，进行兼容性测试，验证用户体验，优化测试流程`,
+                (task) => `开展${task}测试，执行性能测试，评估系统性能，优化系统配置`
+            ],
+            '优化': [
+                (task) => `优化${task}性能，分析系统瓶颈，重构关键代码，提升响应速度`,
+                (task) => `改进${task}效率，优化算法逻辑，减少资源消耗，提升处理能力`,
+                (task) => `提升${task}质量，优化代码结构，改进用户体验，增强系统稳定性`,
+                (task) => `优化${task}架构，重构系统设计，提升扩展性，改善系统维护性`,
+                (task) => `改进${task}流程，优化操作步骤，提升工作效率，减少人工成本`
+            ],
+            
+            // 产品经理专属 - 增加到5个
+            '撰写': [
+                (task) => `撰写${task}文档，详细描述功能需求，明确验收标准，整理技术约束`,
+                (task) => `编写${task}材料，整理产品背景和目标，分析用户需求，制定产品策略`,
+                (task) => `完成${task}报告，总结产品进展，分析用户反馈，规划下一步工作`,
+                (task) => `制作${task}文档，整理需求详情，明确功能规格，输出产品规范`,
+                (task) => `编写${task}说明，描述功能细节，明确使用流程，输出使用指南`
+            ],
+            '沟通': [
+                (task) => `沟通${task}需求，明确业务场景，对齐产品愿景，建立团队共识`,
+                (task) => `协商${task}细节，明确功能要求，商讨实现方案，达成开发共识`,
+                (task) => `交流${task}想法，收集各方意见，协调资源需求，推动项目进展`,
+                (task) => `讨论${task}方案，分析可行性，协调时间安排，确定实施计划`,
+                (task) => `洽谈${task}合作，明确合作目标，商讨合作条件，建立合作关系`
+            ],
+            '跟进': [
+                (task) => `跟进${task}进度，协调开发资源，解决技术障碍，确保项目按时推进`,
+                (task) => `跟踪${task}进展，监控开发状态，及时发现问题，协调解决方案`,
+                (task) => `监督${task}执行，确保按计划进行，协调团队协作，推动项目完成`,
+                (task) => `管理${task}过程，监控关键节点，协调资源分配，确保项目质量`,
+                (task) => `推动${task}进行，跟踪问题解决，协调各方资源，确保项目成功`
+            ],
+            
+            // 市场运营专属 - 增加到6-8个
+            '策划': [
+                (task) => `策划${task}活动，设计创意主题，制定执行方案，规划推广渠道`,
+                (task) => `制定${task}策略，分析目标人群，设计互动环节，准备宣传素材`,
+                (task) => `规划${task}方案，确定活动流程，设计用户体验，制定应急预案`,
+                (task) => `构思${task}创意，挖掘用户痛点，设计解决方案，制定营销策略`,
+                (task) => `设计${task}计划，明确活动目标，规划执行步骤，准备实施资源`,
+                (task) => `制定${task}方案，分析市场机会，设计活动形式，规划预算分配`,
+                (task) => `策划${task}项目，设计活动概念，制定时间安排，规划团队分工`,
+                (task) => `制定${task}计划，明确KPI指标，设计执行路径，规划效果评估`
+            ],
+            '执行': [
+                (task) => `执行${task}计划，协调各方资源，监控执行进度，优化投放策略`,
+                (task) => `实施${task}方案，管理宣传渠道，跟踪执行效果，调整推广内容`,
+                (task) => `开展${task}活动，组织团队协作，监控现场情况，确保活动顺利进行`,
+                (task) => `推进${task}工作，协调供应商资源，监控执行质量，优化活动效果`,
+                (task) => `实施${task}项目，管理执行团队，监控活动进展，及时调整策略`,
+                (task) => `执行${task}任务，协调合作伙伴，监控执行过程，确保达到目标`,
+                (task) => `推进${task}活动，管理活动流程，监控执行细节，优化活动体验`,
+                (task) => `实施${task}推广，管理广告投放，监控转化效果，优化投放策略`
+            ],
+            '推广': [
+                (task) => `推广${task}活动，制定传播策略，选择推广渠道，监控推广效果`,
+                (task) => `宣传${task}内容，设计传播话题，准备宣传素材，扩大品牌影响`,
+                (task) => `营销${task}产品，制定销售策略，选择营销渠道，提升销售业绩`,
+                (task) => `传播${task}信息，策划媒体合作，制作宣传内容，提升品牌知名度`,
+                (task) => `推广${task}品牌，制定品牌策略，选择传播媒介，提升品牌认知`,
+                (task) => `宣传${task}事件，策划媒体报道，准备新闻稿，扩大事件影响`,
+                (task) => `推广${task}服务，制定获客策略，选择推广方式，提升用户增长`,
+                (task) => `营销${task}方案，制定销售计划，选择销售渠道，提升销售转化`
+            ],
+            '分析': [
+                (task) => `分析${task}数据，挖掘用户行为，评估投放效果，优化营销策略`,
+                (task) => `研究${task}趋势，分析市场变化，评估竞争态势，制定应对策略`,
+                (task) => `评估${task}效果，分析转化数据，计算ROI表现，总结活动经验`,
+                (task) => `研究${task}表现，分析用户反馈，评估品牌影响，优化后续计划`,
+                (task) => `分析${task}结果，收集数据指标，评估活动效果，制定优化方案`,
+                (task) => `研究${task}数据，分析用户画像，评估市场反应，优化营销策略`,
+                (task) => `评估${task}绩效，分析KPI达成，总结经验教训，优化后续策略`,
+                (task) => `分析${task}表现，研究用户行为，评估市场机会，制定增长策略`
+            ],
+            '监控': [
+                (task) => `监控${task}效果，跟踪投放数据，分析用户反馈，优化宣传策略`,
+                (task) => `跟踪${task}进展，收集执行数据，评估活动效果，调整执行方案`,
+                (task) => `观察${task}表现，分析市场反应，评估品牌影响，优化后续计划`,
+                (task) => `监测${task}数据，跟踪关键指标，分析变化趋势，及时调整策略`,
+                (task) => `监控${task}进展，收集反馈信息，评估执行效果，优化活动方案`,
+                (task) => `跟踪${task}效果，监测数据变化，分析用户行为，优化推广策略`
+            ],
+            '制作': [
+                (task) => `制作${task}素材，设计视觉元素，准备宣传内容，优化用户体验`,
+                (task) => `创作${task}内容，结合品牌调性，设计传播语言，准备多渠道素材`,
+                (task) => `准备${task}物料，设计宣传形式，准备推广内容，优化投放效果`,
+                (task) => `设计${task}视觉，制作宣传材料，准备活动物料，优化品牌展示`,
+                (task) => `制作${task}资料，准备宣传工具，设计视觉风格，优化信息传达`,
+                (task) => `创作${task}文案，撰写宣传内容，设计传播角度，优化传播效果`
+            ],
+            '洽谈': [
+                (task) => `洽谈${task}合作，明确合作意向，商讨合作细节，签订合作协议`,
+                (task) => `沟通${task}事宜，明确合作需求，商讨合作方案，达成合作共识`,
+                (task) => `协商${task}内容，明确合作目标，商讨合作条件，建立合作关系`,
+                (task) => `讨论${task}合作，分析合作价值，商讨合作模式，确定合作框架`,
+                (task) => `洽谈${task}事宜，明确合作方向，商讨合作细节，推进合作进程`
+            ],
+            '维护': [
+                (task) => `维护${task}关系，加强沟通联系，解决合作问题，深化合作关系`,
+                (task) => `管理${task}渠道，维护渠道关系，优化合作模式，提升合作效果`,
+                (task) => `维护${task}客户，提供客户支持，收集客户反馈，提升客户满意度`,
+                (task) => `管理${task}伙伴，维护伙伴关系，协调合作资源，提升合作价值`,
+                (task) => `维护${task}资源，管理合作关系，优化资源利用，提升资源价值`
+            ],
+            '参加': [
+                (task, career) => career === 'market'
+                    ? `参加${task}会议，明确活动目标，确认执行细节，分配宣传任务`
+                    : `参加${task}会议，明确需求细节，确认技术方案，分配开发任务`,
+                (task, career) => career === 'market'
+                    ? `参与${task}活动，学习行业经验，交流市场信息，拓展合作资源`
+                    : `参与${task}讨论，交流技术方案，分享项目经验，协调开发工作`,
+                (task, career) => career === 'market'
+                    ? `出席${task}会议，汇报工作进展，协调资源需求，推动项目执行`
+                    : `出席${task}评审，汇报项目进展，协调技术方案，推动项目进行`
+            ]
+        };
+        
+        // ==================== 修复：话术轮换函数 ====================
+        function expandTask(task, career, mode, projectName, taskIndex) {
+            generationCount++;
+            const taskLower = task.toLowerCase();
+            
+            // 特别处理市场运营关键词
+            const marketKeywords = ['策划', '执行', '推广', '分析', '监控', '制作', '洽谈', '维护', '参加', '跟进'];
+            const productKeywords = ['撰写', '沟通', '梳理', '研究', '设计', '跟进', '参加'];
+            const itKeywords = ['开发', '修复', '部署', '测试', '优化'];
+            
+            // 按职业优先级匹配关键词
+            let keywords = [];
+            if (career === 'market') {
+                keywords = [...marketKeywords, ...productKeywords, ...itKeywords];
+            } else if (career === 'product') {
+                keywords = [...productKeywords, ...marketKeywords, ...itKeywords];
+            } else {
+                keywords = [...itKeywords, ...productKeywords, ...marketKeywords];
+            }
+            
+            // 按长度排序
+            keywords.sort((a, b) => b.length - a.length);
+            
+            // 查找匹配的关键词
+            for (const keyword of keywords) {
+                if (taskLower.includes(keyword.toLowerCase())) {
+                    const templates = taskTemplates[keyword];
+                    if (templates && templates.length > 0) {
+                        // 使用生成计数确保话术轮换 - 增强随机性
+                        const uniqueKey = `${career}_${task}_${taskIndex}_${generationCount}_${Date.now()}`;
+                        const hash = Array.from(uniqueKey).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                        const templateIndex = (hash + generationCount) % templates.length;
+                        
+                        // 获取任务内容
+                        const keywordIndex = taskLower.indexOf(keyword.toLowerCase());
+                        let content = task.substring(keywordIndex + keyword.length).trim();
+                        
+                        if (!content) {
+                            content = task;
+                        }
+                        
+                        // 调用模板
+                        return templates[templateIndex](content, career);
+                    }
+                }
+            }
+            
+            // 默认描述 - 增强随机性
+            const defaultDescs = {
+                it: [
+                    `${task}，推进开发工作，优化代码质量，确保功能实现`,
+                    `${task}，完成开发任务，测试功能可用性，优化系统性能`,
+                    `${task}，实现技术方案，验证功能效果，准备上线部署`,
+                    `${task}，推进项目开发，解决技术问题，确保按时交付`
+                ],
+                product: [
+                    `${task}，推进产品工作，明确需求细节，优化用户体验`,
+                    `${task}，完成产品设计，协调开发资源，跟进项目进度`,
+                    `${task}，推进产品迭代，收集用户反馈，优化产品功能`,
+                    `${task}，管理产品需求，协调团队协作，确保项目成功`
+                ],
+                market: [
+                    `${task}，推进营销工作，制定执行计划，监控活动效果`,
+                    `${task}，完成市场活动，分析执行效果，优化推广策略`,
+                    `${task}，推进品牌传播，监控市场反应，提升品牌影响`,
+                    `${task}，执行营销计划，跟踪推广效果，优化投放策略`
+                ]
+            };
+            
+            const descs = defaultDescs[career] || [`${task}，完成相关工作，推进项目进展`];
+            const descIndex = (generationCount + taskIndex) % descs.length;
+            return descs[descIndex];
+        }
+        
+        // ==================== 项目解析函数 ====================
+        function parseContent(input) {
+            const projects = [];
+            const lines = input.split('\n');
+            
+            let currentProject = null;
+            let currentTasks = [];
+            let foundProjectName = false;
+            let inTasks = false;
+            let hasTasksSection = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                
+                if (line === '') {
+                    if (currentProject && foundProjectName && (inTasks || hasTasksSection)) {
+                        let nextLine = '';
+                        for (let j = i + 1; j < lines.length; j++) {
+                            nextLine = lines[j].trim();
+                            if (nextLine !== '') break;
+                        }
+                        
+                        if (nextLine.startsWith('项目名称') || 
+                            nextLine.startsWith('产出物') || 
+                            nextLine.startsWith('风险') ||
+                            nextLine.startsWith('会议结论') ||
+                            /\d+\.\d+/.test(nextLine) || 
+                            nextLine.includes('上线')) {
+                            
+                            projects.push({
+                                name: currentProject.name,
+                                timeInfo: currentProject.timeInfo || '',
+                                tasks: [...currentTasks],
+                                outputs: currentProject.outputs || '',
+                                risks: currentProject.risks || '',
+                                meetingConclusion: currentProject.meetingConclusion || ''
+                            });
+                            
+                            currentProject = null;
+                            currentTasks = [];
+                            foundProjectName = false;
+                            inTasks = false;
+                            hasTasksSection = false;
+                        }
+                    }
+                    continue;
+                }
+                
+                if (line.startsWith('项目名称：') || line.startsWith('项目名称:') || 
+                    line.startsWith('项目名称；') || line.startsWith('项目名称')) {
+                    
+                    if (currentProject && foundProjectName) {
+                        projects.push({
+                            name: currentProject.name,
+                            timeInfo: currentProject.timeInfo || '',
+                            tasks: [...currentTasks],
+                            outputs: currentProject.outputs || '',
+                            risks: currentProject.risks || '',
+                            meetingConclusion: currentProject.meetingConclusion || ''
+                        });
+                    }
+                    
+                    let projectName = line;
+                    const prefixes = ['项目名称：', '项目名称:', '项目名称；', '项目名称'];
+                    
+                    for (const prefix of prefixes) {
+                        if (projectName.startsWith(prefix)) {
+                            projectName = projectName.substring(prefix.length).trim();
+                            break;
+                        }
+                    }
+                    
+                    currentProject = {
+                        name: projectName || '未命名项目',
+                        timeInfo: '',
+                        outputs: '',
+                        risks: '',
+                        meetingConclusion: ''
+                    };
+                    currentTasks = [];
+                    inTasks = false;
+                    foundProjectName = true;
+                    hasTasksSection = false;
+                    continue;
+                }
+                
+                if (line === '工作任务：' || line === '工作任务' || line === '工作任务:' || line === '工作任务；') {
+                    inTasks = true;
+                    hasTasksSection = true;
+                    continue;
+                }
+                
+                if (/\d+\.\d+/.test(line) || line.includes('上线') || line.includes('预计')) {
+                    if (currentProject) {
+                        currentProject.timeInfo = line;
+                    }
+                    continue;
+                }
+                
+                if (line.startsWith('产出物：') || line.startsWith('产出物:')) {
+                    if (currentProject) {
+                        currentProject.outputs = line.replace('产出物：', '').replace('产出物:', '').trim();
+                    }
+                    continue;
+                }
+                
+                if (line.startsWith('风险：') || line.startsWith('风险:')) {
+                    if (currentProject) {
+                        currentProject.risks = line.replace('风险：', '').replace('风险:', '').trim();
+                    }
+                    continue;
+                }
+                
+                if (line.startsWith('会议结论：') || line.startsWith('会议结论:')) {
+                    if (currentProject) {
+                        currentProject.meetingConclusion = line.replace('会议结论：', '').replace('会议结论:', '').trim();
+                    }
+                    continue;
+                }
+                
+                if (currentProject && foundProjectName) {
+                    if (inTasks || (foundProjectName && hasTasksSection && !inTasks)) {
+                        if (!line.includes('：') && !line.includes(':') && 
+                            !line.includes('；') && !line.includes(';') &&
+                            !line.startsWith('产出物') && !line.startsWith('风险') &&
+                            !line.startsWith('会议结论')) {
+                            
+                            if (!inTasks) {
+                                inTasks = true;
+                            }
+                            
+                            // 修复：产品经理的"跟进开发进度"不应该识别为"开发"关键词
+                            if (line.includes('跟进开发进度')) {
+                                currentTasks.push('跟进开发进度');
+                            } else {
+                                currentTasks.push(line);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (currentProject && foundProjectName) {
+                projects.push({
+                    name: currentProject.name,
+                    timeInfo: currentProject.timeInfo || '',
+                    tasks: [...currentTasks],
+                    outputs: currentProject.outputs || '',
+                    risks: currentProject.risks || '',
+                    meetingConclusion: currentProject.meetingConclusion || ''
+                });
+            }
+            
+            return projects;
+        }
+        
+        // ==================== 智能进度判断 ====================
+        function analyzeProgress(project, tasks, career) {
+            const allText = tasks.join(' ') + ' ' + project.timeInfo;
+            const textLower = allText.toLowerCase();
+            
+            const completedKeywords = ['已完成', '完成', '已上线', '已交付', '已结束', '完结'];
+            const isCompleted = completedKeywords.some(keyword => textLower.includes(keyword));
+            
+            let stage = '';
+            if (career === 'it') {
+                if (textLower.includes('设计') || textLower.includes('架构')) {
+                    stage = '设计阶段';
+                } else if (textLower.includes('测试') || textLower.includes('调试')) {
+                    stage = '测试阶段';
+                } else {
+                    stage = '开发阶段';
+                }
+            } else if (career === 'product') {
+                if (textLower.includes('设计') || textLower.includes('原型') || textLower.includes('prd')) {
+                    stage = '设计阶段';
+                } else if (textLower.includes('评审') || textLower.includes('沟通')) {
+                    stage = '评审阶段';
+                } else if (textLower.includes('跟进') || textLower.includes('验收')) {
+                    stage = '跟进阶段';
+                } else {
+                    stage = '设计阶段';
+                }
+            } else if (career === 'market') {
+                if (textLower.includes('策划') || textLower.includes('方案')) {
+                    stage = '策划阶段';
+                } else if (textLower.includes('执行') || textLower.includes('推广')) {
+                    stage = '执行阶段';
+                } else if (textLower.includes('分析') || textLower.includes('报告')) {
+                    stage = '分析阶段';
+                } else {
+                    stage = '执行阶段';
+                }
+            }
+            
+            return { isCompleted, stage };
+        }
+        
+        // ==================== 生成下周计划 ====================
+        function generateNextWeekPlan(project, tasks, career, progressInfo) {
+            const { isCompleted, stage } = progressInfo;
+            
+            if (isCompleted) {
+                switch(career) {
+                    case 'it': return '完成项目收尾工作，整理技术文档，进行项目复盘';
+                    case 'product': return '跟进产品使用反馈问题，收集用户建议，规划下一版本功能';
+                    case 'market': return '跟进活动效果与问题，分析活动数据，准备总结报告';
+                    default: return '跟进后续工作，收集反馈，准备下一阶段计划';
+                }
+            } else {
+                switch(career) {
+                    case 'it':
+                        if (stage === '设计阶段') return '完成系统详细设计，进行技术评审，准备开发环境';
+                        else if (stage === '测试阶段') return '完成系统测试，修复测试问题，准备上线部署';
+                        else return '完成剩余模块开发，进行集成测试，准备上线部署';
+                    case 'product':
+                        if (stage === '设计阶段') return '继续完成剩余模块设计，组织设计评审，完善产品文档';
+                        else if (stage === '评审阶段') return '跟进评审反馈，优化设计方案，准备开发排期';
+                        else if (stage === '跟进阶段') return '跟进开发进度，协调资源需求，确保项目按时交付';
+                        else return '跟进项目开发进度，协调开发资源，确保产品功能按计划实现';
+                    case 'market':
+                        if (stage === '策划阶段') return '继续完成活动策划，完善执行方案，准备宣传物料';
+                        else if (stage === '执行阶段') return '继续执行活动方案，监控推广效果，优化投放策略';
+                        else return '继续完成活动的策划与执行，监控活动进展';
+                    default: return '完成剩余工作，推进项目进展';
+                }
+            }
+        }
+        
+        // ==================== 生成进度描述 ====================
+        function generateProgressDescription(project, tasks, career, progressInfo) {
+            const { isCompleted, stage } = progressInfo;
+            const taskCount = tasks.filter(t => t).length;
+            const completedTasks = Math.min(taskCount, Math.floor(taskCount * 0.7));
+            
+            if (isCompleted) {
+                switch(career) {
+                    case 'it': return `项目已完成，共完成${completedTasks}个主要功能模块，系统已稳定运行`;
+                    case 'product': return `产品设计已完成，完成${completedTasks}个关键任务，需求已明确并交付开发`;
+                    case 'market': return `活动已成功上线/完成，推进${completedTasks}项重点工作，达到预期效果`;
+                    default: return `工作已完成，完成${completedTasks}项主要任务`;
+                }
+            } else {
+                if (career === 'it') {
+                    return `开发阶段，已完成${completedTasks}个主要功能模块，整体进度正常`;
+                } else if (career === 'product') {
+                    return `${stage}，完成${completedTasks}个关键任务，产品设计工作稳步推进`;
+                } else if (career === 'market') {
+                    return `${stage}，推进${completedTasks}项重点工作，活动按计划进行`;
+                } else {
+                    return `${stage}，完成${completedTasks}项主要任务`;
+                }
+            }
+        }
+        
+        // ==================== 用户ID管理 ====================
+        function getOrCreateUserId() {
+            // 如果用户已登录，使用邮箱作为ID
+            if (currentUserEmail) {
+                return currentUserEmail;
+            }
+            
+            // 检查本地存储中是否有匿名ID
+            let anonymousId = localStorage.getItem('weeklyReportAnonymousId');
+            
+            if (!anonymousId) {
+                // 生成新的匿名ID
+                anonymousId = 'anonymous_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36);
+                localStorage.setItem('weeklyReportAnonymousId', anonymousId);
+                
+                // 记录到用户映射
+                if (!userStats.anonymousUserMap[anonymousId]) {
+                    userStats.anonymousUserMap[anonymousId] = {
+                        id: anonymousId,
+                        created: new Date().toISOString(),
+                        lastActive: new Date().toISOString(),
+                        activities: 0,
+                        reports: 0
+                    };
+                    userStats.anonymousUsers++;
+                    saveLocalStats();
+                }
+            }
+            
+            // 更新最后活跃时间
+            if (userStats.anonymousUserMap[anonymousId]) {
+                userStats.anonymousUserMap[anonymousId].lastActive = new Date().toISOString();
+            }
+            
+            return anonymousId;
+        }
+        
+        function mergeAnonymousData(userEmail) {
+            const anonymousId = localStorage.getItem('weeklyReportAnonymousId');
+            
+            if (anonymousId && userEmail) {
+                console.log(`合并数据：匿名ID ${anonymousId} -> 用户 ${userEmail}`);
+                
+                // 查找匿名用户的所有日志和反馈
+                const anonymousLogs = userStats.userLogs.filter(log => log.userId === anonymousId);
+                const feedbacks = JSON.parse(localStorage.getItem('weeklyReportFeedbacks') || '[]');
+                const anonymousFeedbacks = feedbacks.filter(fb => fb.userId === anonymousId);
+                
+                // 将匿名数据更新为正式用户数据
+                anonymousLogs.forEach(log => {
+                    log.userId = userEmail;
+                    log.userEmail = userEmail;
+                });
+                
+                anonymousFeedbacks.forEach(fb => {
+                    fb.userId = userEmail;
+                    fb.userEmail = userEmail;
+                });
+                
+                // 保存更新后的反馈
+                localStorage.setItem('weeklyReportFeedbacks', JSON.stringify(feedbacks));
+                
+                // 从匿名用户映射中移除
+                if (userStats.anonymousUserMap[anonymousId]) {
+                    delete userStats.anonymousUserMap[anonymousId];
+                    userStats.anonymousUsers = Math.max(0, userStats.anonymousUsers - 1);
+                }
+                
+                // 移除本地存储的匿名ID
+                localStorage.removeItem('weeklyReportAnonymousId');
+                
+                // 保存统计数据
+                saveLocalStats();
+                
+                console.log(`数据合并完成：${anonymousLogs.length}条日志，${anonymousFeedbacks.length}条反馈`);
+            }
+        }
+        
+        // ==================== 主逻辑函数 ====================
+        function selectCareer(career) {
+            currentCareer = career;
+            document.querySelectorAll('.career-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            document.getElementById('inputText').value = careerExamples[career];
+        }
+        
+        function selectMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            const desc = document.getElementById('modeDesc');
+            if (mode === 'standard') {
+                desc.innerHTML = `<strong>标准版：</strong>包含项目名称、进度、下周计划、上线时间、任务适当扩充`;
+            } else {
+                desc.innerHTML = `<strong>豪华版：</strong>包含项目名称、进度、下周计划、预计上线时间、产出物、会议结论、风险、任务详细扩充`;
+            }
+        }
+        
+        function generateReport() {
+            const input = document.getElementById('inputText').value.trim();
+            if (!input) {
+                alert('请输入工作内容！');
+                return;
+            }
+            
+            const projects = parseContent(input);
+            if (projects.length === 0) {
+                alert('未识别到有效的工作内容！');
+                return;
+            }
+            
+            let report = '';
+            
+            projects.forEach((project, index) => {
+                report += `${index + 1} ${project.name}\n`;
+                
+                const progressInfo = analyzeProgress(project, project.tasks, currentCareer);
+                const progressDesc = generateProgressDescription(project, project.tasks, currentCareer, progressInfo);
+                const nextWeekPlan = generateNextWeekPlan(project, project.tasks, currentCareer, progressInfo);
+                
+                if (currentMode === 'standard') {
+                    report += `进度：${progressDesc}\n`;
+                    report += `下周计划：${nextWeekPlan}\n`;
+                    report += `上线时间：${project.timeInfo || '下月中旬上线'}\n`;
+                } else {
+                    report += `进度：${progressDesc}；预计${project.timeInfo || "下月中旬"}完成主要目标\n`;
+                    report += `下周计划：${nextWeekPlan}\n`;
+                    
+                    const defaultOutputs = {
+                        it: "技术方案文档、API接口文档、测试报告",
+                        product: "PRD文档、原型设计稿、产品手册",
+                        market: "活动方案、宣传素材、数据报告"
+                    };
+                    report += `产出物：${project.outputs || defaultOutputs[currentCareer]}\n`;
+                    report += `风险：${project.risks || "1 需求变更风险 2 技术实现风险 3 时间安排风险"}\n`;
+                }
+                
+                report += `具体任务：\n`;
+                project.tasks.forEach((task, taskIndex) => {
+                    const expanded = expandTask(task, currentCareer, currentMode, project.name, taskIndex);
+                    
+                    if (currentMode === 'luxury' && project.meetingConclusion && 
+                        (task.includes('会议') || task.includes('评审') || task.includes('沟通'))) {
+                        report += `${taskIndex + 1}. ${expanded}；会议结论：${project.meetingConclusion.replace(/\n/g, ' ')}\n`;
+                    } else {
+                        report += `${taskIndex + 1}. ${expanded}\n`;
+                    }
+                });
+                
+                if (index < projects.length - 1) {
+                    report += "\n";
+                }
+            });
+            
+            document.getElementById('outputContent').textContent = report;
+            
+            // 记录用户活动
+            logUserActivity('generate_report');
+            updateStats();
+        }
+        
+        function copyReport() {
+            const text = document.getElementById('outputContent').textContent;
+            if (!text || text.includes('生成的周报将显示在这里')) {
+                alert('请先生成周报！');
+                return;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ 已复制';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            }).catch(err => {
+                alert('复制失败，请手动选择文本复制');
+            });
+        }
+        
+        // ==================== 用户系统功能 ====================
+        function showLogin() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+        
+        function showRegister() {
+            document.getElementById('registerModal').style.display = 'flex';
+        }
+        
+        function showFeedback() {
+            document.getElementById('feedbackModal').style.display = 'flex';
+        }
+        
+        function showAdmin() {
+            const password = prompt('请输入管理员密码:');
+            if (password !== '522window') {
+                if (password) alert('密码错误！');
+                return;
+            }
+            loadAdminStats();
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showNotification('请输入邮箱和密码', 'error');
+                return;
+            }
+            
+            // 验证用户是否存在
+            const users = getRegisteredUsers();
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (!user) {
+                showNotification('邮箱或密码错误', 'error');
+                return;
+            }
+            
+            // 登录成功，记录当前用户
+            currentUserEmail = email;
+            currentUserId = email;
+            
+            // 合并匿名数据到正式账户
+            mergeAnonymousData(email);
+            
+            showNotification(`登录成功！欢迎 ${email}`, 'success');
+            closeModal('loginModal');
+            
+            // 清空登录表单
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            
+            logUserActivity('user_login');
+        }
+        
+        function register() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            
+            if (!email || !password) {
+                showNotification('请输入邮箱和密码', 'error');
+                return;
+            }
+            
+            // 验证邮箱格式
+            if (!validateEmail(email)) {
+                showNotification('请输入有效的邮箱地址', 'error');
+                return;
+            }
+            
+            // 检查邮箱是否已存在
+            const users = getRegisteredUsers();
+            if (users.some(u => u.email === email)) {
+                showNotification('该邮箱已注册', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showNotification('密码长度至少6位', 'error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showNotification('两次输入的密码不一致', 'error');
+                return;
+            }
+            
+            // 注册成功
+            const newUser = {
+                email: email,
+                password: password,
+                registeredAt: new Date().toISOString()
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('weeklyReportUsers', JSON.stringify(users));
+            
+            // 更新统计数据
+            userStats.registeredUsers = users.length;
+            userStats.totalUsers = userStats.registeredUsers + userStats.anonymousUsers;
+            
+            // 设置当前用户
+            currentUserEmail = email;
+            currentUserId = email;
+            
+            // 合并匿名数据到正式账户
+            mergeAnonymousData(email);
+            
+            saveLocalStats();
+            
+            showNotification('注册成功！', 'success');
+            closeModal('registerModal');
+            
+            // 清空注册表单
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
+            document.getElementById('registerConfirmPassword').value = '';
+            
+            logUserActivity('user_register');
+        }
+        
+        function getRegisteredUsers() {
+            try {
+                return JSON.parse(localStorage.getItem('weeklyReportUsers') || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+        
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+        
+        // ==================== 用户活动日志 ====================
+        function logUserActivity(action) {
+            const userId = getOrCreateUserId();
+            const userEmail = currentUserEmail || '匿名用户';
+            
+            const logEntry = {
+                timestamp: new Date().toISOString(),
+                userId: userId,
+                userEmail: userEmail,
+                action: action,
+                career: currentCareer,
+                mode: currentMode,
+                date: new Date().toDateString()
+            };
+            
+            userStats.userLogs.unshift(logEntry);
+            
+            // 更新今日统计
+            const today = new Date().toDateString();
+            if (userStats.todayStats.date !== today) {
+                userStats.todayStats = {
+                    date: today,
+                    users: new Set(),
+                    reports: 0,
+                    careers: { it: 0, product: 0, market: 0 }
+                };
+            }
+            
+            if (action === 'generate_report') {
+                userStats.todayStats.reports++;
+                userStats.todayStats.careers[currentCareer] = (userStats.todayStats.careers[currentCareer] || 0) + 1;
+                userStats.totalReports++;
+                userStats.careerStats[currentCareer] = (userStats.careerStats[currentCareer] || 0) + 1;
+            }
+            
+            if (action === 'page_visit' || action === 'user_login' || action === 'user_register') {
+                userStats.todayStats.users.add(userId);
+                userStats.activeUsers.push({
+                    userId: userId,
+                    userEmail: userEmail,
+                    lastActive: new Date().toISOString()
+                });
+            }
+            
+            // 限制日志数量
+            if (userStats.userLogs.length > 1000) {
+                userStats.userLogs = userStats.userLogs.slice(0, 1000);
+            }
+            
+            saveLocalStats();
+        }
+        
+        function updateStats() {
+            const today = new Date().toDateString();
+            if (userStats.todayStats.date !== today) {
+                userStats.todayStats = {
+                    date: today,
+                    users: new Set(),
+                    reports: 0,
+                    careers: { it: 0, product: 0, market: 0 }
+                };
+            }
+            
+            saveLocalStats();
+        }
+        
+        // ==================== 后台管理功能 ====================
+        function switchAdminTab(tabIndex) {
+            // 切换标签页
+            document.querySelectorAll('.admin-tab').forEach((tab, index) => {
+                tab.classList.toggle('active', index === tabIndex);
+            });
+            
+            document.querySelectorAll('.admin-tab-content').forEach((content, index) => {
+                content.classList.toggle('active', index === tabIndex);
+            });
+            
+            // 如果切换到日志标签，刷新日志显示
+            if (tabIndex === 2) {
+                loadUserLogs();
+            } else if (tabIndex === 3) {
+                refreshUserData();
+            }
+        }
+        
+        function loadAdminStats() {
+            // 加载用户数据
+            const users = getRegisteredUsers();
+            userStats.registeredUsers = users.length;
+            userStats.totalUsers = userStats.registeredUsers + userStats.anonymousUsers;
+            
+            // 计算周留存率
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            const recentUsers = userStats.activeUsers.filter(user => 
+                new Date(user.lastActive) > oneWeekAgo
+            ).length;
+            const retentionRate = userStats.totalUsers > 0 ? 
+                Math.round((recentUsers / userStats.totalUsers) * 100) : 0;
+            
+            // 更新显示
+            document.getElementById('adminTodayUsers').textContent = userStats.todayStats.users.size;
+            document.getElementById('adminTodayReports').textContent = userStats.todayStats.reports;
+            document.getElementById('adminTodayIT').textContent = userStats.todayStats.careers.it || 0;
+            document.getElementById('adminTodayProduct').textContent = userStats.todayStats.careers.product || 0;
+            document.getElementById('adminTodayMarket').textContent = userStats.todayStats.careers.market || 0;
+            
+            document.getElementById('adminTotalUsers').textContent = userStats.totalUsers;
+            document.getElementById('adminTotalReports').textContent = userStats.totalReports;
+            document.getElementById('adminRegisteredUsers').textContent = userStats.registeredUsers;
+            document.getElementById('adminAnonymousUsers').textContent = userStats.anonymousUsers;
+            document.getElementById('adminRetentionRate').textContent = retentionRate + '%';
+            
+            // 加载反馈
+            const feedbacks = JSON.parse(localStorage.getItem('weeklyReportFeedbacks') || '[]');
+            let feedbackText = feedbacks.map((fb, i) => 
+                `[${i+1}] ${new Date(fb.timestamp).toLocaleString()} - ${fb.type}\n用户ID: ${fb.userId || '未记录'}\n用户: ${fb.userEmail || '未登录'}\n${fb.text}\n`
+            ).join('\n');
+            document.getElementById('adminFeedback').value = feedbackText || '暂无反馈';
+        }
+        
+        function loadUserLogs() {
+            const logsContainer = document.getElementById('adminLogs');
+            logsContainer.innerHTML = '';
+            
+            // 只显示最近100条日志
+            const recentLogs = userStats.userLogs.slice(0, 100);
+            
+            if (recentLogs.length === 0) {
+                logsContainer.innerHTML = '<div class="log-entry">暂无日志记录</div>';
+                return;
+            }
+            
+            recentLogs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                
+                const timestamp = new Date(log.timestamp).toLocaleString();
+                const actionMap = {
+                    'page_visit': '页面访问',
+                    'generate_report': '生成周报',
+                    'user_login': '用户登录',
+                    'user_register': '用户注册',
+                    'submit_feedback': '提交反馈'
+                };
+                
+                const actionText = actionMap[log.action] || log.action;
+                const userEmail = log.userEmail || '匿名用户';
+                const userId = log.userId || '未记录';
+                const details = log.action === 'generate_report' ? 
+                    `职业：${log.career}，模式：${log.mode}` : '';
+                
+                logEntry.innerHTML = `
+                    <div class="log-timestamp">${timestamp}</div>
+                    <div class="log-action">${actionText}</div>
+                    <div class="log-userid">用户ID：${userId}</div>
+                    <div class="log-email">用户：${userEmail}</div>
+                    <div class="log-details">${details}</div>
+                `;
+                
+                logsContainer.appendChild(logEntry);
+            });
+        }
+        
+        function refreshUserData() {
+            // 更新用户统计显示
+            document.getElementById('registeredCount').textContent = userStats.registeredUsers;
+            document.getElementById('anonymousCount').textContent = userStats.anonymousUsers;
+            
+            // 显示匿名用户列表
+            const anonymousList = document.getElementById('anonymousUserList');
+            const anonymousUsers = Object.values(userStats.anonymousUserMap);
+            
+            if (anonymousUsers.length === 0) {
+                anonymousList.innerHTML = '<div style="color: #8b949e; padding: 5px;">暂无匿名用户数据</div>';
+                return;
+            }
+            
+            let html = '';
+            anonymousUsers.forEach((user, index) => {
+                const created = new Date(user.created).toLocaleDateString();
+                const lastActive = new Date(user.lastActive).toLocaleDateString();
+                html += `
+                    <div style="padding: 5px; border-bottom: 1px solid #333; font-size: 11px;">
+                        <div><strong style="color: #ff7b72;">${user.id}</strong></div>
+                        <div>创建: ${created} | 最后活跃: ${lastActive}</div>
+                        <div>活动: ${user.activities}次 | 报告: ${user.reports}次</div>
+                    </div>
+                `;
+            });
+            
+            anonymousList.innerHTML = html;
+        }
+        
+        function submitFeedback() {
+            const type = document.getElementById('feedbackType').value;
+            const text = document.getElementById('feedbackText').value.trim();
+            
+            if (!text) {
+                showNotification('请填写反馈内容！', 'error');
+                return;
+            }
+            
+            const userId = getOrCreateUserId();
+            const userEmail = currentUserEmail || '匿名用户';
+            
+            const feedback = {
+                type: type,
+                text: text,
+                timestamp: new Date().toISOString(),
+                userId: userId,
+                userEmail: userEmail,
+                career: currentCareer,
+                mode: currentMode
+            };
+            
+            let feedbacks = JSON.parse(localStorage.getItem('weeklyReportFeedbacks') || '[]');
+            feedbacks.push(feedback);
+            localStorage.setItem('weeklyReportFeedbacks', JSON.stringify(feedbacks));
+            
+            showNotification('感谢您的反馈！', 'success');
+            closeModal('feedbackModal');
+            document.getElementById('feedbackText').value = '';
+            
+            // 记录活动
+            logUserActivity('submit_feedback');
+        }
+        
+        // ==================== Excel导出功能 ====================
+        function exportLogsExcel() {
+            if (userStats.userLogs.length === 0) {
+                showNotification('没有日志数据可以导出', 'error');
+                return;
+            }
+            
+            // 创建CSV内容
+            const headers = ['时间戳', '用户ID', '用户账号', '行为类型', '职业', '模式', '日期'];
+            const rows = userStats.userLogs.map(log => [
+                new Date(log.timestamp).toLocaleString(),
+                log.userId || '未记录',
+                log.userEmail || '匿名用户',
+                log.action,
+                log.career,
+                log.mode,
+                log.date
+            ]);
+            
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+            ].join('\n');
+            
+            // 创建Blob并下载
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `用户行为日志_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('日志数据已导出为Excel格式', 'success');
+        }
+        
+        function exportFeedbackExcel() {
+            const feedbacks = JSON.parse(localStorage.getItem('weeklyReportFeedbacks') || '[]');
+            
+            if (feedbacks.length === 0) {
+                showNotification('没有反馈数据可以导出', 'error');
+                return;
+            }
+            
+            // 创建CSV内容
+            const headers = ['时间戳', '用户ID', '用户账号', '反馈类型', '内容', '职业', '模式'];
+            const rows = feedbacks.map(fb => [
+                new Date(fb.timestamp).toLocaleString(),
+                fb.userId || '未记录',
+                fb.userEmail || '匿名用户',
+                fb.type,
+                fb.text.replace(/"/g, '""').replace(/\n/g, ' '),
+                fb.career || '',
+                fb.mode || ''
+            ]);
+            
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+            ].join('\n');
+            
+            // 创建Blob并下载
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `用户反馈_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('反馈数据已导出为Excel格式', 'success');
+        }
+        
+        function exportAllData() {
+            const data = {
+                stats: userStats,
+                feedbacks: JSON.parse(localStorage.getItem('weeklyReportFeedbacks') || '[]'),
+                users: getRegisteredUsers(),
+                anonymousUsers: userStats.anonymousUserMap,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `完整数据_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('完整数据已导出', 'success');
+        }
+        
+        function resetAllStats() {
+            if (confirm('确定要重置所有统计数据吗？此操作将清空所有统计数据和日志，但保留注册用户信息。')) {
+                // 重置统计数据
+                const users = getRegisteredUsers();
+                userStats = {
+                    totalUsers: users.length + userStats.anonymousUsers,
+                    registeredUsers: users.length,
+                    anonymousUsers: userStats.anonymousUsers, // 保留匿名用户数
+                    activeUsers: [],
+                    totalReports: 0,
+                    careerStats: { it: 0, product: 0, market: 0 },
+                    userLogs: [],
+                    anonymousUserMap: userStats.anonymousUserMap, // 保留匿名用户映射
+                    todayStats: {
+                        date: new Date().toDateString(),
+                        users: new Set(),
+                        reports: 0,
+                        careers: { it: 0, product: 0, market: 0 }
+                    }
+                };
+                
+                saveLocalStats();
+                loadAdminStats();
+                
+                showNotification('统计数据已重置', 'success');
+            }
+        }
+        
+        function clearFeedback() {
+            if (confirm('确定要清空所有用户反馈吗？此操作不可恢复！')) {
+                localStorage.removeItem('weeklyReportFeedbacks');
+                document.getElementById('adminFeedback').value = '暂无反馈';
+                showNotification('用户反馈已清空', 'success');
+            }
+        }
+        
+        function clearLogs() {
+            if (confirm('确定要清空所有用户行为日志吗？此操作不可恢复！')) {
+                userStats.userLogs = [];
+                saveLocalStats();
+                loadUserLogs();
+                showNotification('用户日志已清空', 'success');
+            }
+        }
+        
+        function clearAnonymousData() {
+            if (confirm('确定要清理所有匿名用户数据吗？此操作将删除所有匿名用户的日志和反馈，但不会影响已注册用户。')) {
+                // 清除匿名用户日志
+                userStats.userLogs = userStats.userLogs.filter(log => !log.userId.startsWith('anonymous_'));
+                
+                // 清除匿名用户反馈
+                const feedbacks = JSON.parse(localStorage.getItem('weeklyReportFeedbacks') || '[]');
+                const filteredFeedbacks = feedbacks.filter(fb => !fb.userId.startsWith('anonymous_'));
+                localStorage.setItem('weeklyReportFeedbacks', JSON.stringify(filteredFeedbacks));
+                
+                // 重置匿名用户统计
+                userStats.anonymousUsers = 0;
+                userStats.anonymousUserMap = {};
+                userStats.totalUsers = userStats.registeredUsers;
+                
+                saveLocalStats();
+                refreshUserData();
+                
+                showNotification('匿名用户数据已清理', 'success');
+            }
+        }
+        
+        function saveLocalStats() {
+            try {
+                const statsToSave = {
+                    ...userStats,
+                    todayStats: {
+                        ...userStats.todayStats,
+                        users: Array.from(userStats.todayStats.users)
+                    }
+                };
+                
+                localStorage.setItem('weeklyReportUserStats', JSON.stringify(statsToSave));
+            } catch (e) {
+                console.log('保存统计失败:', e);
+            }
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // ==================== 初始化 ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // 加载本地统计数据
+            const savedStats = localStorage.getItem('weeklyReportUserStats');
+            if (savedStats) {
+                try {
+                    const parsed = JSON.parse(savedStats);
+                    userStats = {
+                        ...userStats,
+                        ...parsed
+                    };
+                    
+                    if (userStats.todayStats && userStats.todayStats.users && Array.isArray(userStats.todayStats.users)) {
+                        userStats.todayStats.users = new Set(userStats.todayStats.users);
+                    }
+                    
+                    // 如果是新的一天，重置今日统计但保留日期
+                    const today = new Date().toDateString();
+                    if (userStats.todayStats.date !== today) {
+                        userStats.todayStats = {
+                            date: today,
+                            users: new Set(),
+                            reports: 0,
+                            careers: { it: 0, product: 0, market: 0 }
+                        };
+                        saveLocalStats();
+                    }
+                    
+                    // 计算匿名用户数
+                    userStats.anonymousUsers = Object.keys(userStats.anonymousUserMap || {}).length;
+                    userStats.totalUsers = (userStats.registeredUsers || 0) + userStats.anonymousUsers;
+                } catch (e) {
+                    console.log('加载统计失败，使用默认值:', e);
+                }
+            }
+            
+            // 初始化输入框内容
+            document.getElementById('inputText').value = careerExamples['it'];
+            
+            // 设置模态框点击关闭
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            });
+            
+            // 获取当前用户ID（如果是匿名用户，确保有ID）
+            currentUserId = getOrCreateUserId();
+            
+            // 记录页面访问
+            logUserActivity('page_visit');
+            
+            console.log('周报生成器已初始化完成！');
+            console.log('当前用户ID:', currentUserId);
+            console.log('管理员密码: 522window');
+        });
+    </script>
+</body>
+</html>
