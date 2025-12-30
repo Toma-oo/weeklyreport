@@ -2,6 +2,6 @@
   "name": "weeklyreport",
   "version": "1.0.0",
   "scripts": {
-    "build": "mkdir -p /vercel/output/static && echo 'Static directory created.'"
+    "build": "mkdir -p /vercel/output/static && echo 'ok' > /vercel/output/static/_vercel.txt && echo 'Build placeholder created.'"
   }
 }
